@@ -1,0 +1,41 @@
+{
+    "name": "__MSG_appName__",
+    "version": "1.0.0",
+    "manifest_version": 2,
+    "description": "__MSG_appDescription__",
+    "icons": {
+        "16": "assets/icons/inbox_16.png",
+        "48": "assets/icons/inbox_48.png",
+        "128": "assets/icons/inbox_128.png"
+    },
+    "default_locale": "en",
+    "content_scripts": [
+        {
+            "matches": ["https://mail.google.com/*", "https://inbox.google.com/*"],
+            "js": ["assets/js/inboxsdk.js", "content/content.js"],
+            "run_at": "document_end"
+        }
+    ],
+    "background": {
+        "scripts": ["background/background.js"]
+    },
+    "permissions": ["https://mail.google.com/*", "https://inbox.google.com/*"],
+    "options_ui": {
+        "page": "options/index.html"
+    },
+    "page_action": {
+        "default_icon": {
+            "16": "assets/icons/inbox_16.png",
+            "48": "assets/icons/inbox_48.png",
+            "128": "assets/icons/inbox_128.png"
+        },
+        "default_title": "Gmail Extension",
+        "default_popup": "popup/index.html"
+    },
+    "applications": {
+        "gecko": {
+            "id": "borderify@example.com"
+        }
+    },
+    "web_accessible_resources": ["assets/img/*", "assets/icons/*"]
+}
