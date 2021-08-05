@@ -9,7 +9,6 @@ import { getStore } from '../@redux/getStore';
 import { onRequest } from './scripts/onRequest';
 
 import App from './App';
-import InboxSDKManager from './inboxSDK';
 
 import './App.scss';
 
@@ -35,9 +34,6 @@ jquery(async () => {
         store.ready().then(() => {
             ReactDOM.render(<App></App>, app);
         });
-
-        const inboxSDKManager = new InboxSDKManager();
-        await inboxSDKManager.init();
     } catch (error) {
         console.log('Error in Init', error);
     }

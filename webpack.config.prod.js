@@ -5,14 +5,21 @@ const {
     getOutput,
     getCopyPlugins,
     getZipPlugin,
-    getFirefoxCopyPlugins,
     getEntry,
     getResolves,
     getDefinePlugins,
+    getCleanWebpackPlugin,
 } = require('./webpack.utils');
-const config = require('./config.json');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const webpack = require('webpack');
+const path = require('path');
+const WebpackExtensionManifestPlugin = require('webpack-extension-manifest-plugin');
+const baseManifest = require('./src/baseManifest.json');
+
+const dotenv = require('dotenv').config({ path: path.resolve(__dirname, './.env') });
+const config = dotenv.parsed;
+
+const NODE_ENV = 'production';
+const TARGET = process.env.TARGET;
 
 const generalConfig = {
     mode: 'production',
@@ -44,7 +51,13 @@ const generalConfig = {
         minimize: true,
         minimizer: [
             new TerserPlugin({
-                test: /\.js(\?.*)?$/i,
+                parallel: true,
+                terserOptions: {
+                    format: {
+                        comments: false,
+                    },
+                },
+                extractComments: false,
             }),
         ],
     },
@@ -57,44 +70,19 @@ const eslintOptions = {
 module.exports = [
     {
         ...generalConfig,
-        output: getOutput('chrome', config.tempDirectory),
-        entry: getEntry(config.chromePath),
+        entry: getEntry(config.SRC_DIR),
+        output: getOutput(TARGET, config.TEMP_DIR),
         plugins: [
+            ...getCleanWebpackPlugin(TARGET, config.TEMP_DIR, config.DIST_DIR),
             new webpack.ProgressPlugin(),
-            new CleanWebpackPlugin(),
             new ESLintPlugin(eslintOptions),
-            ...getDefinePlugins('chrome', config.tempDirectory, config.chromePath),
-            ...getHTMLPlugins('chrome', config.tempDirectory, config.chromePath),
-            ...getCopyPlugins('chrome', config.tempDirectory, config.chromePath),
-            getZipPlugin('chrome', config.distDirectory),
-        ],
-    },
-    {
-        ...generalConfig,
-        output: getOutput('opera', config.tempDirectory),
-        entry: getEntry(config.operaPath),
-        plugins: [
-            new webpack.ProgressPlugin(),
-            new CleanWebpackPlugin(),
-            new ESLintPlugin(eslintOptions),
-            ...getDefinePlugins('opera', config.tempDirectory, config.operaPath),
-            ...getHTMLPlugins('opera', config.tempDirectory, config.operaPath),
-            ...getCopyPlugins('opera', config.tempDirectory, config.operaPath),
-            getZipPlugin('opera', config.distDirectory),
-        ],
-    },
-    {
-        ...generalConfig,
-        entry: getEntry(config.firefoxPath),
-        output: getOutput('firefox', config.tempDirectory),
-        plugins: [
-            new webpack.ProgressPlugin(),
-            new CleanWebpackPlugin(),
-            new ESLintPlugin(eslintOptions),
-            ...getDefinePlugins('firefox', config.tempDirectory, config.firefoxPath),
-            ...getHTMLPlugins('firefox', config.tempDirectory, config.firefoxPath),
-            ...getFirefoxCopyPlugins('firefox', config.tempDirectory, config.firefoxPath),
-            getZipPlugin('firefox', config.distDirectory),
+            new WebpackExtensionManifestPlugin({
+                config: { base: baseManifest },
+            }),
+            ...getDefinePlugins({ NODE_ENV }),
+            ...getHTMLPlugins(TARGET, config.TEMP_DIR, config.SRC_DIR),
+            ...getCopyPlugins(TARGET, config.TEMP_DIR, config.SRC_DIR),
+            ...getZipPlugin(TARGET, config.DIST_DIR),
         ],
     },
 ];

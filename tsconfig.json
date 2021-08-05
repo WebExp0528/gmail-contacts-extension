@@ -24,7 +24,7 @@
             "@redux/*": ["./@redux/*"],
             "@hooks/*": ["./hooks/*"]
         },
-        "typeRoots": ["node_modules/@types"],
-        "types": ["inboxsdk"]
+        "typeRoots": ["node_modules/@types", "./node_modules/gmail-js/src", "./node_modules/@types/inboxsdk"],
+        "types": ["inboxsdk", "gmail-js"]
     }
 }

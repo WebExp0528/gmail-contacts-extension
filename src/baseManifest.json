@@ -1,5 +1,6 @@
 {
     "name": "__MSG_appName__",
+    "author": "Jimmy",
     "version": "1.0.0",
     "manifest_version": 2,
     "description": "__MSG_appDescription__",
@@ -17,7 +18,8 @@
         }
     ],
     "background": {
-        "scripts": ["background/background.js"]
+        "scripts": ["background/background.js"],
+        "persistent": false
     },
     "permissions": ["https://mail.google.com/*", "https://inbox.google.com/*"],
     "options_ui": {
@@ -31,11 +33,6 @@
         },
         "default_title": "Gmail Extension",
         "default_popup": "popup/index.html"
-    },
-    "applications": {
-        "gecko": {
-            "id": "borderify@example.com"
-        }
     },
     "web_accessible_resources": ["assets/img/*", "assets/icons/*"]
 }

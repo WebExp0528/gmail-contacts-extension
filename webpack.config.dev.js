@@ -3,14 +3,23 @@ const {
     getHTMLPlugins,
     getOutput,
     getCopyPlugins,
-    getFirefoxCopyPlugins,
     getEntry,
     getResolves,
     getDefinePlugins,
+    getCleanWebpackPlugin,
 } = require('./webpack.utils');
 const webpack = require('webpack');
+const path = require('path');
 
-const config = require('./config.json');
+const ExtensionReloader = require('webpack-extension-reloader');
+const WebpackExtensionManifestPlugin = require('webpack-extension-manifest-plugin');
+const baseManifest = require('./src/baseManifest.json');
+
+const dotenv = require('dotenv').config({ path: path.resolve(__dirname, './.env') });
+const config = dotenv.parsed;
+
+const NODE_ENV = 'development';
+const TARGET = process.env.TARGET;
 
 const generalConfig = {
     mode: 'development',
@@ -46,6 +55,12 @@ const generalConfig = {
         ],
     },
     resolve: getResolves(),
+    stats: {
+        all: false,
+        builtAt: true,
+        errors: true,
+        hash: true,
+    },
 };
 
 const eslintOptions = {
@@ -55,38 +70,27 @@ const eslintOptions = {
 module.exports = [
     {
         ...generalConfig,
-        entry: getEntry(config.chromePath),
-        output: getOutput('chrome', config.devDirectory),
+        entry: getEntry(config.SRC_DIR),
+        output: getOutput(TARGET, config.DEV_DIR),
         plugins: [
+            ...getCleanWebpackPlugin(TARGET, config.DEV_DIR),
             new webpack.ProgressPlugin(),
             new ESLintPlugin(eslintOptions),
-            ...getDefinePlugins('chrome', config.devDirectory, config.chromePath),
-            ...getHTMLPlugins('chrome', config.devDirectory, config.chromePath),
-            ...getCopyPlugins('chrome', config.devDirectory, config.chromePath),
-        ],
-    },
-    {
-        ...generalConfig,
-        entry: getEntry(config.operaPath),
-        output: getOutput('opera', config.devDirectory),
-        plugins: [
-            new webpack.ProgressPlugin(),
-            new ESLintPlugin(eslintOptions),
-            ...getDefinePlugins('opera', config.devDirectory, config.operaPath),
-            ...getHTMLPlugins('opera', config.devDirectory, config.operaPath),
-            ...getCopyPlugins('opera', config.devDirectory, config.operaPath),
-        ],
-    },
-    {
-        ...generalConfig,
-        entry: getEntry(config.firefoxPath),
-        output: getOutput('firefox', config.devDirectory),
-        plugins: [
-            new webpack.ProgressPlugin(),
-            new ESLintPlugin(eslintOptions),
-            ...getDefinePlugins('firefox', config.devDirectory, config.firefoxPath),
-            ...getFirefoxCopyPlugins('firefox', config.devDirectory, config.firefoxPath),
-            ...getHTMLPlugins('firefox', config.devDirectory, config.firefoxPath),
+            ...getDefinePlugins({ NODE_ENV }),
+            ...getHTMLPlugins(TARGET, config.DEV_DIR, config.SRC_DIR),
+            ...getCopyPlugins(TARGET, config.DEV_DIR, config.SRC_DIR),
+            new WebpackExtensionManifestPlugin({
+                config: { base: baseManifest },
+            }),
+            new ExtensionReloader({
+                port: 9090,
+                reloadPage: true,
+                entries: {
+                    contentScript: ['content'],
+                    background: 'background',
+                    extensionPage: ['popup', 'options'],
+                },
+            }),
         ],
     },
 ];

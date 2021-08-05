@@ -5,6 +5,7 @@ const ZipPlugin = require('zip-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const path = require('path');
 const dotenv = require('dotenv').config({ path: __dirname + '/.env' });
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const getHTMLPlugins = (browserDir, outputDir = 'dev', sourceDir = 'src') => [
     new HtmlWebpackPlugin({
@@ -21,13 +22,9 @@ const getHTMLPlugins = (browserDir, outputDir = 'dev', sourceDir = 'src') => [
     }),
 ];
 
-const getDefinePlugins = (browserDir, outputDir = 'dev', sourceDir = 'src') => [
+const getDefinePlugins = (config = {}) => [
     new webpack.DefinePlugin({
-        'process.env.NODE_ENV':
-            outputDir === 'dev'
-                ? JSON.stringify(process.env.NODE_ENV || 'development')
-                : JSON.stringify(process.env.NODE_ENV || 'production'),
-        'process.env': JSON.stringify(dotenv.parsed),
+        'process.env': JSON.stringify({ ...config, ...dotenv.parsed }),
     }),
 ];
 
@@ -44,7 +41,6 @@ const getEntry = (sourceDir = 'src') => {
         options: [path.resolve(__dirname, `${sourceDir}/options/options.tsx`)],
         content: [path.resolve(__dirname, `${sourceDir}/content/index.tsx`)],
         background: [path.resolve(__dirname, `${sourceDir}/background/index.ts`)],
-        hotreload: [path.resolve(__dirname, `${sourceDir}/utils/hot-reload.js`)],
     };
 };
 
@@ -59,55 +55,45 @@ const getCopyPlugins = (browserDir, outputDir = 'dev', sourceDir = 'src') => [
                 from: `${sourceDir}/_locales`,
                 to: path.resolve(__dirname, `${outputDir}/${browserDir}/_locales`),
             },
-            {
-                from: `${sourceDir}/manifest.json`,
-                to: path.resolve(__dirname, `${outputDir}/${browserDir}/manifest.json`),
-            },
         ],
     }),
 ];
 
-const getFirefoxCopyPlugins = (browserDir, outputDir = 'dev', sourceDir = 'src') => [
-    new CopyWebpackPlugin({
-        patterns: [
-            {
-                from: `${sourceDir}/assets`,
-                to: path.resolve(__dirname, `${outputDir}/${browserDir}/assets`),
+const getZipPlugin = (browserDir, outputDir = 'dist') => {
+    return [
+        new ZipPlugin({
+            path: path.resolve(__dirname, `${outputDir}/${browserDir}`),
+            filename: browserDir,
+            extension: 'zip',
+            fileOptions: {
+                mtime: new Date(),
+                mode: 0o100664,
+                compress: true,
+                forceZip64Format: false,
             },
-            {
-                from: `${sourceDir}/_locales`,
-                to: path.resolve(__dirname, `${outputDir}/${browserDir}/_locales`),
+            zipOptions: {
+                forceZip64Format: false,
             },
-            {
-                from: `${sourceDir}/manifest-ff.json`,
-                to: path.resolve(__dirname, `${outputDir}/${browserDir}/manifest.json`),
-            },
-        ],
-    }),
-];
+        }),
+    ];
+};
 
-const getZipPlugin = (browserDir, outputDir = 'dist') =>
-    new ZipPlugin({
-        path: path.resolve(__dirname, `${outputDir}/${browserDir}`),
-        filename: browserDir,
-        extension: 'zip',
-        fileOptions: {
-            mtime: new Date(),
-            mode: 0o100664,
-            compress: true,
-            forceZip64Format: false,
-        },
-        zipOptions: {
-            forceZip64Format: false,
-        },
-    });
-
-const getAnalyzerPlugin = (browserDir, outputDir = 'dist') => {
+const getAnalyzerPlugin = () => {
     return [
         new BundleAnalyzerPlugin({
-            analyzerMode: 'static',
-            generateStatsFile: true,
-            statsFilename: `/${outputDir}/${browserDir}.html`,
+            analyzerMode: 'server',
+        }),
+    ];
+};
+
+const getCleanWebpackPlugin = (browserDir, ...dirs) => {
+    return [
+        new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: [
+                ...(dirs ? dirs.map((dir) => path.join(process.cwd(), `${dir}/${browserDir}`)) : ['dist', 'temp']),
+            ],
+            cleanStaleWebpackAssets: false,
+            verbose: true,
         }),
     ];
 };
@@ -134,10 +120,10 @@ module.exports = {
     getHTMLPlugins,
     getOutput,
     getCopyPlugins,
-    getFirefoxCopyPlugins,
     getZipPlugin,
     getEntry,
     getResolves,
     getDefinePlugins,
     getAnalyzerPlugin,
+    getCleanWebpackPlugin,
 };
