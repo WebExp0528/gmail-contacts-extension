@@ -1,4 +1,4 @@
-export type InboxSDKOptions = {
+declare type InboxSDKOptions = {
     /**
      * ThreadRowView Handler
      */

@@ -1,8 +1,6 @@
 import { Runtime } from 'webextension-polyfill-ts';
-import { Message } from 'types/message';
-import { Response } from 'types/response';
 
-export const onRequest = async (msg: Message, sender: Runtime.SendMessageOptionsType): Promise<Response> => {
+export const onRequest = async (msg: EXTMessage, sender: Runtime.SendMessageOptionsType): Promise<EXTResponse> => {
     try {
         switch (msg.type) {
             default:

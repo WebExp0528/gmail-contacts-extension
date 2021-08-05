@@ -2,7 +2,6 @@ import React from 'react';
 import { render } from 'react-dom';
 
 import { config } from 'utils/config';
-import { InboxSDKOptions } from 'types/inboxSdk';
 
 class IbxSDKMgr {
     /* ---------------------------- Static members ---------------------------- */

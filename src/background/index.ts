@@ -1,6 +1,5 @@
 import { browser, Runtime, Tabs } from 'webextension-polyfill-ts';
 import { wrapStore } from 'webext-redux';
-import { Message } from 'types/message';
 import store from '@redux/createStore';
 
 wrapStore(store);
@@ -45,7 +44,7 @@ class Background {
      * @param reply
      * @returns
      */
-    onMessage = (message: Message, sender: Runtime.MessageSender) => {
+    onMessage = (message: EXTMessage, sender: Runtime.MessageSender) => {
         switch (message.type) {
             case 'ACTIVE_PAGE_ACTION': {
                 browser.pageAction.show(sender.tab?.id || 0);
@@ -58,7 +57,7 @@ class Background {
     /**
      * send message
      */
-    sendMessage = (tab: Tabs.Tab, msg: Message) => {
+    sendMessage = (tab: Tabs.Tab, msg: EXTMessage) => {
         return new Promise((resolve) =>
             // @ts-ignore
             browser.tabs.sendMessage(tab.id as number, msg, (response: Message) => {

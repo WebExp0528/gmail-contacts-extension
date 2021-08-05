@@ -1,4 +1,4 @@
-export type OpenControls = {
+declare type OpenControls = {
     isVisible: boolean;
     handleClose: () => void;
     handleOpen: () => void;

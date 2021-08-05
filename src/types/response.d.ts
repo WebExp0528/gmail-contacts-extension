@@ -1,6 +1,6 @@
-export type ResponseType = 'SUCCESS' | 'FAILED' | 'PENDING' | 'UNAUTHORIZED' | 'AUTHENTICATED';
+declare type EXTResponseType = 'SUCCESS' | 'FAILED' | 'PENDING' | 'UNAUTHORIZED' | 'AUTHENTICATED';
 
-export type Response<T = any> = {
-    type: ResponseType;
+declare type EXTResponse<T = any> = {
+    type: EXTResponseType;
     data?: T;
 };
