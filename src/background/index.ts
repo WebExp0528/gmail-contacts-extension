@@ -1,6 +1,8 @@
 import { browser, Runtime, Tabs } from 'webextension-polyfill-ts';
 import { wrapStore } from 'webext-redux';
 import store from '@redux/createStore';
+import { getUser } from '@redux/user/actions';
+import { getContacts } from '@redux/contacts/actions';
 
 wrapStore(store);
 
@@ -44,14 +46,20 @@ class Background {
      * @param reply
      * @returns
      */
-    onMessage = (message: EXTMessage, sender: Runtime.MessageSender) => {
+    onMessage = async (message: EXTMessage, sender: Runtime.MessageSender) => {
+        console.log('[Message] =>', message);
         switch (message.type) {
             case 'ACTIVE_PAGE_ACTION': {
                 browser.pageAction.show(sender.tab?.id || 0);
                 break;
             }
+            case 'CHECK_AUTH': {
+                return await this.getInitialInfo(message?.data?.email || '');
+            }
+            case 'GET_CONTACTS': {
+                return await getContacts(store.dispatch)(message?.data?.email || '');
+            }
         }
-        return true;
     };
 
     /**
@@ -64,6 +72,10 @@ class Background {
                 resolve(response);
             })
         );
+    };
+
+    getInitialInfo = (email: string) => {
+        return getUser(store.dispatch)(email);
     };
 }
 

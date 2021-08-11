@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { browser } from 'webextension-polyfill-ts';
 import jquery from 'jquery';
+import { Provider } from 'react-redux';
 
 import { sendMessage } from 'utils/sendMessages';
 
@@ -32,7 +33,12 @@ jquery(async () => {
         browser.runtime.onMessage.addListener(onRequest);
 
         store.ready().then(() => {
-            ReactDOM.render(<App></App>, app);
+            ReactDOM.render(
+                <Provider store={store}>
+                    <App />
+                </Provider>,
+                app
+            );
         });
     } catch (error) {
         console.log('Error in Init', error);

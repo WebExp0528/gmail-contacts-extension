@@ -34,6 +34,22 @@ class IbxSDKMgr {
         IbxSDKMgr.sdk.Widgets.showModalView(newOptions);
     };
 
+    /* -------------------------------------------------------------------------- */
+    /*                              Get Email Address                             */
+    /* -------------------------------------------------------------------------- */
+    static getEmail = (): string => {
+        return IbxSDKMgr.sdk.User.getEmailAddress();
+    };
+
+    static authenticated = (): void => {
+        IbxSDKMgr.instance.authenticated();
+    };
+
+    static getRoute = (): string => {
+        const routeView = IbxSDKMgr.sdk.Router.getCurrentRouteView();
+        return routeView.getRouteID();
+    };
+
     /* --------------------- Member variables and functions --------------------- */
 
     removeHandlers: any[] = [];
@@ -49,14 +65,6 @@ class IbxSDKMgr {
     private initialize = async (): Promise<void> => {
         try {
             IbxSDKMgr.sdk = await this.setupSDK();
-            this.removeHandlers.forEach((el) => el());
-
-            if (this.onComposeView) {
-                this.removeHandlers.push(IbxSDKMgr.sdk.Compose.registerComposeViewHandler(this.onComposeView));
-            }
-            if (this.onThreadRowView) {
-                this.removeHandlers.push(IbxSDKMgr.sdk.Lists.registerThreadRowViewHandler(this.onThreadRowView));
-            }
         } catch (error) {
             this.log('Error in init function', error);
         }
@@ -70,6 +78,16 @@ class IbxSDKMgr {
         new Promise((resolve) => {
             InboxSDK.load(2, config.inboxSdkId).then(resolve);
         });
+
+    public authenticated = (): void => {
+        this.removeHandlers.forEach((el) => el());
+        if (this.onComposeView) {
+            this.removeHandlers.push(IbxSDKMgr.sdk.Compose.registerComposeViewHandler(this.onComposeView));
+        }
+        if (this.onThreadRowView) {
+            this.removeHandlers.push(IbxSDKMgr.sdk.Lists.registerThreadRowViewHandler(this.onThreadRowView));
+        }
+    };
 }
 
 export default IbxSDKMgr;
