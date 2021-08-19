@@ -5,7 +5,7 @@ import { openSignInWindow } from 'utils/openSignInWindow';
 
 const ModalOAuth = () => {
     const handleClickOAuth = () => {
-        openSignInWindow(`${process.env.OAUTH_URL}/${IbxSDKMgr.getEmail()}`, 'Google OAuth');
+        openSignInWindow(`${process.env.OAUTH_URL}`, 'Google OAuth');
     };
     return (
         <div>
