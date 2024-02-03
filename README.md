@@ -1,4 +1,4 @@
-# Gmail Extension
+# Gmail Contacts Extension
 
 Works for Chrome, Opera, Edge & Firefox.
 
@@ -33,7 +33,7 @@ Works for Chrome, Opera, Edge & Firefox.
 
 >### Run & Build
 >
->> 1. Clone the repository `git clone https://github.com/sorza-jimmy/gmail-extension.git`
+>> 1. Clone the repository `git clone https://github.com/sorza-jimmy/gmail-contacts-extension.git`
 >> 2. Run `npm install` or `yarn install`
 >> 3. Run `npm run build` or `yarn build`
 >
@@ -55,9 +55,15 @@ Works for Chrome, Opera, Edge & Firefox.
 
 ## Developing
 
+### Extension
+
 >The following tasks can be used when you want to start developing the extension
 >and want to enable live reload -
 >`npm run watch` or `yarn watch`
+
+### Backend
+
+> You need to run a backend for this extension. <https://github.com/WebExp0528/gmail-contacts-extension-server>
 
 ## Packaging
 

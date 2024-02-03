@@ -2,7 +2,7 @@ let windowObjectReference: any = null;
 let previousUrl: string | null = null;
 let closeInterval: any;
 
-export const openSignInWindow = (url: string, name = 'Gmail Extension', popupWinWidth = 600, popupWinHeight = 700) => {
+export const openSignInWindow = (url: string, name = 'Gmail Contacts Extension', popupWinWidth = 600, popupWinHeight = 700) => {
     // window features
     const windowLeft = window.screen.width / 2 - popupWinWidth / 2;
     const windowTop = window.screen.height / 2 - popupWinHeight / 2;

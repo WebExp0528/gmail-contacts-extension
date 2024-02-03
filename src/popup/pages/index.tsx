@@ -7,11 +7,11 @@ export const PageHome = () => {
         <MyBox p={1}>
             <Container>
                 <Typography align="center" variant="h5">
-                    Gmail Extension1
+                    Gmail Contacts Extension1
                 </Typography>
                 <Divider variant="fullWidth" />
                 <Typography align="center" variant="h6">
-                    Please use Gmail Extension
+                    Please use Gmail Contacts Extension
                 </Typography>
             </Container>
         </MyBox>

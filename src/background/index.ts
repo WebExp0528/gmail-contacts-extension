@@ -35,7 +35,7 @@ class Background {
      * Extension Installed
      */
     onInstalled = () => {
-        console.log('[=====Installed Gmail Extension=====]');
+        console.log('[=====Installed Gmail Contacts Extension=====]');
     };
 
     /**

@@ -31,7 +31,7 @@
             "48": "assets/icons/inbox_48.png",
             "128": "assets/icons/inbox_128.png"
         },
-        "default_title": "Gmail Extension",
+        "default_title": "Gmail Contacts Extension",
         "default_popup": "popup/index.html"
     },
     "web_accessible_resources": ["assets/img/*", "assets/icons/*"]
